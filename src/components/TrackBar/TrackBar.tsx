@@ -8,11 +8,13 @@ function TrackBar():JSX.Element{
     const currentTrack = useTypedSelector(state=> state.trackBarInfo)
     const dispatch = useDispatch()
     const audioRef = useRef<HTMLAudioElement>(null);
-    const [maxTime, setMaxTime] = useState(0)
-    setTimeout(()=>{
-        if(audioRef.current)
-            setMaxTime(audioRef.current.duration.toFixed(0))
-    },50)
+    const [maxTime, setMaxTime] = useState<number>(0)
+    setTimeout(() => {
+        if (audioRef.current) {
+            const durationInSeconds = +audioRef.current.duration.toFixed(0);
+            setMaxTime(durationInSeconds);
+        }
+    }, 50);
     const togglePlay = () => {
         dispatch(actions.togglePlay())
         const t = currentTrack.currentTime;
