@@ -2,7 +2,7 @@
 import {useEffect} from "react";
 import {TrackInfo} from "./store/slices/tracksSlice.ts";
 import TrackBlock from "./components/TrackBlock/TrackBlock.tsx";
-
+import styles from "./App.module.css";
 import {useTypedSelector} from "./hooks/useTypedSelector.ts";
 import TrackBar from "./components/TrackBar/TrackBar.tsx";
 function App() {
@@ -47,11 +47,17 @@ function App() {
         }
         ]
   return (
-      <>
-          {favoriteTracks.length}
-          {tracks.map(t=> <TrackBlock track={t} key={t.id}/>)}
-          <TrackBar></TrackBar>
-      </>
+      <div className={styles.playerContainer}>
+          <div className={styles.trackBlocksContainer}>
+              <span className={styles.favoriteCount}>{favoriteTracks.length}</span>
+              {tracks.map((t) => (
+                  <TrackBlock track={t} key={t.id}/>
+              ))}
+          </div>
+          <div className={styles.trackBarContainer}>
+              <TrackBar/>
+          </div>
+      </div>
 
   )
 }

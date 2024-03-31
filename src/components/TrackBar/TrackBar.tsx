@@ -1,20 +1,26 @@
-import {JSX, useRef, useState} from "react";
+import {JSX, useRef, useState, useEffect} from "react";
 import {useTypedSelector} from "../../hooks/useTypedSelector.ts";
 import {useDispatch} from "react-redux";
 import {actions} from "../../store/slices/trackBarSlice.ts";
-
+import styles from "./TrackBar.module.css";
+import { FaPlay, FaPause, FaVolumeUp } from 'react-icons/fa';
 
 function TrackBar():JSX.Element{
     const currentTrack = useTypedSelector(state=> state.trackBarInfo)
     const dispatch = useDispatch()
     const audioRef = useRef<HTMLAudioElement>(null);
     const [maxTime, setMaxTime] = useState<number>(0)
-    setTimeout(() => {
-        if (audioRef.current) {
-            const durationInSeconds = +audioRef.current.duration.toFixed(0);
-            setMaxTime(durationInSeconds);
+    useEffect(() => {
+        if (audioRef.current!=null) {
+            audioRef.current.onloadedmetadata = () => {
+                const dur = audioRef.current!.duration.toFixed(0);
+                setMaxTime(parseInt(dur, 10))
+                if (audioRef.current && typeof currentTrack.voulme === 'number') {
+                    audioRef.current.volume = currentTrack.voulme;
+                }
+            };
         }
-    }, 50);
+    }, []);
     const togglePlay = () => {
         dispatch(actions.togglePlay())
         const t = currentTrack.currentTime;
@@ -51,21 +57,32 @@ function TrackBar():JSX.Element{
         }
     };
 
+    const getRightTime= (sec:number):string=>{
+        const min = sec/60;
+        const seconds = sec%60
+        return `${min.toFixed(0)}:${seconds<10? `0${seconds}`: seconds}`
+    }
+
     if(currentTrack.track)
     return (
-        <div>
-            <h1>{currentTrack.track.trackName} - {currentTrack.track.artistName} </h1>
+        <div className={styles.playerContainer}>
+            <div className={styles.player}>
+                <div className={styles.nameBlock}>
+                    <h1>{currentTrack.track.trackName} - {currentTrack.track.artistName}</h1>
+                </div>
             <audio ref={audioRef} autoPlay={currentTrack.isPlaying} src={currentTrack.track.src}
                    onTimeUpdate={handleTimeUpdate}></audio>
-            <button onClick={togglePlay}>{currentTrack.isPlaying ? 'Pause' : 'Play'}</button>
+            <button onClick={togglePlay}>{currentTrack.isPlaying ? <FaPause /> : <FaPlay />}</button>
             <input
                 type="range"
                 min="0"
                 max={`${audioRef.current && audioRef.current.duration}`}
                 value={currentTrack.currentTime}
                 onChange={handleSeek}
+                className={styles.seekBar}
             />
-            {currentTrack.currentTime? currentTrack.currentTime.toFixed(0): 0} : {maxTime}
+            {currentTrack.currentTime? getRightTime(parseInt( currentTrack.currentTime.toFixed(0),10)): 0} : {getRightTime(maxTime)}
+                <FaVolumeUp style={{ marginLeft: "15px" }}/>
             <input
                 type="range"
                 min="0"
@@ -73,7 +90,9 @@ function TrackBar():JSX.Element{
                 step="0.1"
                 value={`${currentTrack.voulme}`}
                 onChange={handleVoulme}
+                className={styles.volumeBar}
             />
+            </div>
         </div>
     )
     else {

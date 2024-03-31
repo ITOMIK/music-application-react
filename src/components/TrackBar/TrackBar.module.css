@@ -1,0 +1,29 @@
+.playerContainer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #888888;
+    padding: 10px;
+}
+
+.player {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player audio {
+    margin: 0 10px;
+}
+
+.seekBar,
+.volumeBar {
+    width: 200px;
+    margin: 0 10px;
+}
+
+.nameBlock{
+    min-width: 50%;
+    margin: 5px;
+}

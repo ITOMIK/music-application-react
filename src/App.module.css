@@ -1,0 +1,22 @@
+.playerContainer {
+    align-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+
+}
+
+.trackBlocksContainer {
+    width: 100%;
+}
+
+.trackBarContainer {
+    width: 100%;
+    margin-top: 20px;
+}
+.favoriteCount {
+    font-weight: bold;
+    font-size: 1.2em; /* Например, увеличиваем размер текста */
+    color: #007bff; /* Цвет текста */
+}

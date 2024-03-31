@@ -1,0 +1,38 @@
+.trackBlock {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius:10px ;
+}
+
+.trackFlex{
+    display: flex;
+    justify-content: space-between;
+}
+
+.trackInfo {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.buttonsContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.playButton {
+    color: #fff;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
