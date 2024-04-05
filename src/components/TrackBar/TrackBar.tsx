@@ -20,7 +20,7 @@ function TrackBar():JSX.Element{
                 }
             };
         }
-    }, []);
+    }, [audioRef.current]);
     const togglePlay = () => {
         dispatch(actions.togglePlay())
         const t = currentTrack.currentTime;
