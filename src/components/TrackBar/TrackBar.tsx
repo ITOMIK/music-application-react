@@ -3,7 +3,7 @@ import {useTypedSelector} from "../../hooks/useTypedSelector.ts";
 import {useDispatch} from "react-redux";
 import {actions, TrackBar} from "../../store/slices/trackBarSlice.ts";
 import styles from "./TrackBar.module.css";
-import {FaPlay, FaPause, FaVolumeUp, FaVolumeDown, FaVolumeOff} from 'react-icons/fa';
+import {FaPlay, FaPause, FaVolumeUp, FaVolumeDown, FaVolumeOff, FaArrowLeft, FaArrowRight} from 'react-icons/fa';
 
 function _TrackBar():JSX.Element{
     const currentTrack = useTypedSelector(state=> state.trackBarInfo)
@@ -11,14 +11,35 @@ function _TrackBar():JSX.Element{
     const Libary = useTypedSelector(state=>state.libaryTracks)
     const audioRef = useRef<HTMLAudioElement>(null);
     const [maxTime, setMaxTime] = useState<number>(0)
-    const getNextTrack = ():TrackBar => {
-        const song = currentTrack.track!
-        const track: TrackBar= {
-            track: Libary.findIndex(s=> s.id===song.id)>=Libary.length+1? Libary[Libary.findIndex(s=> s.id===song.id)]: Libary[Libary.findIndex(s=> s.id===song.id)+1],
-            currentTime:0,
-            voulme:0,
-            isPlaying:true
+    const getNextTrack = (): TrackBar => {
+        const song = currentTrack.track!;
+        let nextIndex = Libary.findIndex(s => s.id === song.id) + 1;
+        if (nextIndex >= Libary.length) {
+            // Если текущий трек - последний в списке, переключаемся на первый трек в списке
+            nextIndex = 0;
         }
+        const track: TrackBar = {
+            track: Libary[nextIndex],
+            currentTime: 0,
+            voulme: 0,
+            isPlaying: true
+        };
+        return track;
+    };
+
+    const getPreviousTrack = (): TrackBar => {
+        const song = currentTrack.track!;
+        let prevIndex = Libary.findIndex(s => s.id === song.id) - 1;
+        if (prevIndex < 0) {
+            // Если текущий трек - первый в списке, переключаемся на последний трек в списке
+            prevIndex = Libary.length - 1;
+        }
+        const track: TrackBar = {
+            track: Libary[prevIndex],
+            currentTime: 0,
+            voulme: 0,
+            isPlaying: true
+        };
         return track;
     };
 
@@ -82,40 +103,63 @@ function _TrackBar():JSX.Element{
         const seconds = sec%60
         return `${Math.floor(min)}:${seconds<10? `0${seconds}`: seconds}`
     }
-    if(currentTrack.track)
+
+    if(currentTrack.track){
+        const tittle= `${currentTrack.track.trackName} - ${currentTrack.track.artistName}`
     return (
         <div className={styles.playerContainer}>
             <div className={styles.player}>
+
+
                 <div className={styles.nameBlock}>
-                    <h2>{currentTrack.track.trackName} - {currentTrack.track.artistName}</h2>
+
+                    <h2>{tittle.length>80? tittle.slice(0, 77)+"...": tittle}</h2>
                 </div>
+                <button style={{marginLeft: "15px"}} onClick={() => {
+                    dispatch(actions.setTrackBar(getPreviousTrack()))
+                }}><FaArrowLeft /></button>
+                <button style={{marginLeft: "15px"}} onClick={togglePlay}>{currentTrack.isPlaying ? <FaPause/> : <FaPlay/>}</button>
+                <button style={{marginLeft: "15px"}} onClick={() => {
+                    dispatch(actions.setTrackBar(getNextTrack()))
+                }}><FaArrowRight /></button>
 
-            <audio ref={audioRef} autoPlay={currentTrack.isPlaying} src={currentTrack.track.src}
-                   onTimeUpdate={handleTimeUpdate} onEnded={()=>{dispatch(actions.setTrackBar(getNextTrack()))}}></audio>
+                <audio
+                    ref={audioRef}
+                    autoPlay={currentTrack.isPlaying}
+                    src={currentTrack.track.src}
+                    onTimeUpdate={handleTimeUpdate}
+                    onEnded={() => {
+                        dispatch(actions.setTrackBar(getNextTrack()))
+                    }}
+                ></audio>
 
-            <button onClick={togglePlay}>{currentTrack.isPlaying ? <FaPause /> : <FaPlay />}</button>
-            <input
-                type="range"
-                min="0"
-                max={`${audioRef.current && audioRef.current.duration}`}
-                value={currentTrack.currentTime}
-                onChange={handleSeek}
-                className={styles.seekBar}
-            />
-            {currentTrack.currentTime? getRightTime(parseInt( currentTrack.currentTime.toFixed(0),10)): "0:00"} : {getRightTime(maxTime)}
-                {currentTrack.voulme!>0.5?<FaVolumeUp style={{ marginLeft: "15px" }}/>:currentTrack.voulme? <FaVolumeDown style={{ marginLeft: "15px" }}/>:<FaVolumeOff style={{ marginLeft: "15px" }}/>}
-            <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.005"
-                value={`${currentTrack.voulme}`}
-                onChange={handleVoulme}
-                className={styles.volumeBar}
-            />
+                <input
+                    type="range"
+                    min="0"
+                    max={`${audioRef.current && audioRef.current.duration}`}
+                    value={currentTrack.currentTime}
+                    onChange={handleSeek}
+                    className={styles.seekBar}
+                />
+
+
+
+                {currentTrack.currentTime ? getRightTime(parseInt(currentTrack.currentTime.toFixed(0), 10)) : "0:00"} : {getRightTime(maxTime)}
+                {currentTrack.voulme! > 0.5 ? <FaVolumeUp style={{marginLeft: "15px"}}/> : currentTrack.voulme ?
+                    <FaVolumeDown style={{marginLeft: "15px"}}/> : <FaVolumeOff style={{marginLeft: "15px"}}/>}
+                <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.005"
+                    value={`${currentTrack.voulme}`}
+                    onChange={handleVoulme}
+                    className={styles.volumeBar}
+                />
             </div>
         </div>
     )
+    }
     else {
         return (<></>);
     }

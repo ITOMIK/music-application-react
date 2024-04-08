@@ -1,21 +1,33 @@
-import {JSX} from "react";
+import {JSX, useState} from "react";
 import {actions, TrackInfo} from "../../store/slices/tracksSlice.ts";
 import {useDispatch} from "react-redux";
 import {useTypedSelector} from "../../hooks/useTypedSelector.ts";
 import {actions as barActions, TrackBar} from "../../store/slices/trackBarSlice.ts";
+import {actions as LibaryActions} from "../../store/slices/libaryTracks.ts"
 import styles from "./TrackBlock.module.css";
 import { FaPlay } from 'react-icons/fa';
+
 interface TrackBlockProps {
     track: TrackInfo;
+    changeCurrentTracks: Function;
+    currentFlag: boolean;
 }
 
-function TrackBlock({track}:TrackBlockProps):JSX.Element{
+function TrackBlock({track,changeCurrentTracks, currentFlag}:TrackBlockProps):JSX.Element{
     const dispatch = useDispatch()
     const favoriteTracks = useTypedSelector(state=> state.tracksInfo)
+    const LibaryTracks = useTypedSelector(state=> state.libaryTracks)
+    const favFlag = LibaryTracks.some(x=> x.id===track.id)
+    const visFlagFav = favoriteTracks.some((t) => t.id === track.id)
+    const [isVisible, setIsVisible] = useState(true)
+
     const obj:TrackBar={
         track:track
     }
+
     return (
+        <>
+            {isVisible?
         <div className={styles.trackBlock}>
             <div className={styles.trackFlex}>
                 <div className={styles.trackInfo}>
@@ -26,13 +38,28 @@ function TrackBlock({track}:TrackBlockProps):JSX.Element{
                         className={styles.button}
                         onClick={() => {
                             dispatch(actions.toggleTracksInfo(track));
+                            !currentFlag? setIsVisible(false):null
                         }}
                     >
-                        {favoriteTracks.some((t) => t.id === track.id)
-                            ? "Убрать"
-                            : "Добавить"}{" "}
-                        в Избранное
+                        {visFlagFav
+                            ? "Убрать из Избранного"
+                            : "Добавить в Избранное"}{" "}
+
+
                     </button>
+
+                        <button
+                            className={styles.button}
+                            style={{"marginLeft": "20px", "backgroundColor": favFlag?"#ED4926":"#007bff"}}
+                            onClick={() => {
+                                dispatch(LibaryActions.toggleTracksInfo(track))
+                                changeCurrentTracks(true);
+                                currentFlag? setIsVisible(false):null
+                            }}
+                        >
+                            {favFlag? "Убрать из очереди": "Добавить в очередь"}
+
+                        </button>
                 </div>
 
 
@@ -40,13 +67,17 @@ function TrackBlock({track}:TrackBlockProps):JSX.Element{
                     className={styles.playButton}
                     onClick={() => {
                         dispatch(barActions.setTrackBar(obj));
+
                     }}
                 >
-                    <FaPlay />
+                    <FaPlay/>
                 </button>
+
             </div>
 
-        </div>
+        </div>:null
+            }
+        </>
     )
 };
 

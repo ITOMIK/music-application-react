@@ -27,6 +27,8 @@ export const counterSlice = createSlice({
     name: 'TrackBar',
     reducers: {
         setTrackBar: (state: TrackBar, action: PayloadAction<TrackBar>) => {
+            if(action.payload.track)
+            {
             localStorage.setItem('documentname', JSON.stringify(action.payload.track?.trackName+" "+action.payload.track?.artistName));
             document.title =action.payload.track?.trackName+" "+action.payload.track?.artistName;
             state.currentTime = 0;
@@ -35,6 +37,7 @@ export const counterSlice = createSlice({
             localStorage.setItem('currentTime', JSON.stringify(state.currentTime));
             localStorage.setItem('track', JSON.stringify(state.track));
             localStorage.setItem('isPlaying', JSON.stringify(state.isPlaying));
+            }
         },
         togglePlay: (state) => {
             state.isPlaying = !state.isPlaying;
