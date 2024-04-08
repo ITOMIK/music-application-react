@@ -35,6 +35,7 @@ function TrackBlock({track,changeCurrentTracks, currentFlag}:TrackBlockProps):JS
                         {track.artistName} - {track.trackName}
                     </h2>
                     <button
+                        style={{"marginLeft": "20px", "backgroundColor": visFlagFav?"#ED4926":"#007bff"}}
                         className={styles.button}
                         onClick={() => {
                             dispatch(actions.toggleTracksInfo(track));
