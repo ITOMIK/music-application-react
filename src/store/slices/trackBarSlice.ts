@@ -13,6 +13,7 @@ const initialTrack = localStorage.getItem('track') ? JSON.parse(localStorage.get
 const initialCurrentTime = localStorage.getItem('currentTime') ? JSON.parse(localStorage.getItem('currentTime')!) : 0;
 const initialIsPlaying = false;
 const initialVoulme = localStorage.getItem('voulme') ? JSON.parse(localStorage.getItem('voulme')!) : 1;
+document.title = localStorage.getItem('documentname') ? JSON.parse(localStorage.getItem('documentname')!) : "Music Player";
 
 const initialState: TrackBar = {
     track: initialTrack,
@@ -26,6 +27,8 @@ export const counterSlice = createSlice({
     name: 'TrackBar',
     reducers: {
         setTrackBar: (state: TrackBar, action: PayloadAction<TrackBar>) => {
+            localStorage.setItem('documentname', JSON.stringify(action.payload.track?.trackName+" "+action.payload.track?.artistName));
+            document.title =action.payload.track?.trackName+" "+action.payload.track?.artistName;
             state.currentTime = 0;
             state.track = action.payload.track;
             state.isPlaying = true;

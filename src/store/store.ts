@@ -1,10 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import {reducer as TrackReducer}  from "./slices/tracksSlice.ts";
 import {reducer as TrackBarReducer} from "./slices/trackBarSlice.ts";
+import {reducer as TrackLibrary} from "./slices/libaryTracks.ts";
+
 export const store = configureStore({
     reducer: {
         tracksInfo: TrackReducer,
-        trackBarInfo:TrackBarReducer
+        trackBarInfo:TrackBarReducer,
+        libaryTracks: TrackLibrary,
     },
 })
 
