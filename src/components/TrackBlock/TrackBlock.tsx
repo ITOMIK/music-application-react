@@ -2,7 +2,7 @@ import {JSX, useState} from "react";
 import {actions, TrackInfo} from "../../store/slices/tracksSlice.ts";
 import {useDispatch} from "react-redux";
 import {useTypedSelector} from "../../hooks/useTypedSelector.ts";
-import {actions as barActions, TrackBar} from "../../store/slices/trackBarSlice.ts";
+import {actions as barActions, fetchMP3Link, TrackBar} from "../../store/slices/trackBarSlice.ts";
 import {actions as LibaryActions} from "../../store/slices/libaryTracks.ts"
 import styles from "./TrackBlock.module.css";
 import { FaPlay } from 'react-icons/fa';
@@ -66,7 +66,7 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
                     className={styles.playButton}
                     onClick={() => {
                         dispatch(barActions.setTrackBar(obj));
-
+                        dispatch(fetchMP3Link(obj.track!.src));
                     }}
                 >
                     <FaPlay/>

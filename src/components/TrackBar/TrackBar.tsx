@@ -26,6 +26,10 @@ function _TrackBar():JSX.Element{
             voulme: 0,
             isPlaying: true
         };
+        if (currentTrack.track!.src) {
+            // @ts-ignore
+            dispatch(fetchMP3Link(track.track.src, setIsLoading));
+        }
         return track;
     };
 
@@ -42,15 +46,12 @@ function _TrackBar():JSX.Element{
             voulme: 0,
             isPlaying: true
         };
+        if (currentTrack.track!.src) {
+            // @ts-ignore
+            dispatch(fetchMP3Link(track.track.src, setIsLoading));
+        }
         return track;
     };
-    useEffect(() => {
-        // @ts-ignore
-        if(!currentTrack.track.src.startsWith("https")){
-            // @ts-ignore
-        dispatch(fetchMP3Link(currentTrack.track!.src, setIsLoading));
-        }
-    }, [currentTrack.track!.src]);
     useEffect(()=>{
         if(currentTrack.isPlaying && audioRef.current){
         audioRef.current.play()
@@ -71,6 +72,10 @@ function _TrackBar():JSX.Element{
         }
     }, [audioRef.current]);
     const togglePlay = () => {
+        if(currentTrack!.track!.src.length<25){
+            // @ts-ignore
+            dispatch(fetchMP3Link(currentTrack.track!.src, setIsLoading));
+        }
         dispatch(actions.togglePlay())
         const t = currentTrack.currentTime;
         if (audioRef.current) {
@@ -86,12 +91,7 @@ function _TrackBar():JSX.Element{
             }
         }
     };
-    setInterval(()=>{
-        if (currentTrack.track!.src) {
-        // @ts-ignore
-        dispatch(fetchMP3Link(currentTrack.track!.src, setIsLoading));
-        }
-    },180000)
+    
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTime = parseInt(e.target.value, 10);
         if (audioRef != null && audioRef.current != null) {
@@ -123,21 +123,25 @@ function _TrackBar():JSX.Element{
     if(currentTrack.track){
         const tittle= `${currentTrack.track.trackName} - ${currentTrack.track.artistName}`
     return (
-        <>{isLoading && <span style={{margin: '50px', position: 'absolute'}}>Загрузка...</span>}
+        <>
         <div className={styles.playerContainer}>
             <div className={styles.player}>
 
 
                 <div className={styles.nameBlock}>
 
-                    <h2>{tittle.length>80? tittle.slice(0, 77)+"...": tittle}</h2>
+                    <h2>
+                    {isLoading? "Загрузка...": tittle.length>80? tittle.slice(0, 77)+"...": tittle}
+                    </h2>
                 </div>
                 <button style={{marginLeft: "15px"}} onClick={() => {
-                    dispatch(actions.setTrackBar(getPreviousTrack()))
+                    dispatch(actions.setTrackBar(getPreviousTrack()));
+                    dispatch(fetchMP3Link(currentTrack.track.src));
                 }}><FaArrowLeft /></button>
                 <button style={{marginLeft: "15px"}} onClick={togglePlay}>{currentTrack.isPlaying ? <FaPause/> : <FaPlay/>}</button>
                 <button style={{marginLeft: "15px"}} onClick={() => {
-                    dispatch(actions.setTrackBar(getNextTrack()))
+                    dispatch(actions.setTrackBar(getNextTrack()));
+                    dispatch(fetchMP3Link(currentTrack.track.src));
                 }}><FaArrowRight /></button>
 
                 <audio
@@ -146,7 +150,8 @@ function _TrackBar():JSX.Element{
                     src={currentTrack.track.src}
                     onTimeUpdate={handleTimeUpdate}
                     onEnded={() => {
-                        dispatch(actions.setTrackBar(getNextTrack()))
+                        dispatch(actions.setTrackBar(getNextTrack()));
+                        dispatch(fetchMP3Link(currentTrack.track.src));
                     }}
                 ></audio>
 

@@ -126,7 +126,7 @@ function App() {
             </div>
 
             <div className={styles.trackBarContainer}>
-                <TrackBar/>
+                <TrackBar />
             </div>
         </div>
         </>

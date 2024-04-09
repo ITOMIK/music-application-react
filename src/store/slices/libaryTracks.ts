@@ -30,7 +30,9 @@ export const counterSlice = createSlice({
             localStorage.setItem('library', JSON.stringify(state));
         },
         cleanLibrary: (_state)=>{
+            localStorage.setItem('library', JSON.stringify([]));
             return []
+
         }
     },
 });
