@@ -63,15 +63,17 @@ export const counterSlice = createSlice({
 
 export const { actions, reducer } = counterSlice
 
-export const fetchMP3Link = (trackSrc: string | null) => async (dispatch: Function) => {
+export const fetchMP3Link = (trackSrc: string | null, setIsLoading:Function) => async (dispatch: Function) => {
     let retryCount = 0;
-    const maxRetries = 3;
+    const maxRetries = 10;
+    setIsLoading(true)
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
     while (retryCount < maxRetries) {
         try {
             const response = await axios.get(`http://127.0.0.1:8000/GetMp3Link/${trackSrc}`);
             dispatch(actions.setSrcSuccess(response.data.url));
+            setIsLoading(false)
             return; // Выходим из цикла, если запрос выполнен успешно
         } catch (error) {
             console.error("Error fetching MP3 link:", error);
@@ -79,6 +81,6 @@ export const fetchMP3Link = (trackSrc: string | null) => async (dispatch: Functi
             await delay(1000); // Ждем 1 секунду перед следующей попыткой
         }
     }
-
+    setIsLoading(false)
     console.error("Max retry attempts reached. Failed to fetch MP3 link.");
 };

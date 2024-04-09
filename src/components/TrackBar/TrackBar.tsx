@@ -12,6 +12,7 @@ function _TrackBar():JSX.Element{
     const Libary = useTypedSelector(state=>state.libaryTracks)
     const audioRef = useRef<HTMLAudioElement>(null);
     const [maxTime, setMaxTime] = useState<number>(0)
+    const [isLoading, setIsLoading] = useState(false)
     const getNextTrack = (): TrackBar => {
         const song = currentTrack.track!;
         let nextIndex = Libary.findIndex(s => s.id === song.id) + 1;
@@ -46,9 +47,8 @@ function _TrackBar():JSX.Element{
     useEffect(() => {
         // @ts-ignore
         if(!currentTrack.track.src.startsWith("https")){
-            console.log(currentTrack.track!.src)
             // @ts-ignore
-        dispatch(fetchMP3Link(currentTrack.track!.src));
+        dispatch(fetchMP3Link(currentTrack.track!.src, setIsLoading));
         }
     }, [currentTrack.track!.src]);
     useEffect(()=>{
@@ -71,11 +71,6 @@ function _TrackBar():JSX.Element{
         }
     }, [audioRef.current]);
     const togglePlay = () => {
-        console.log(currentTrack.track!.src)
-        if (currentTrack.track!.src) {
-            // @ts-ignore
-            dispatch(fetchMP3Link(currentTrack.track!.src));
-        }
         dispatch(actions.togglePlay())
         const t = currentTrack.currentTime;
         if (audioRef.current) {
@@ -91,6 +86,12 @@ function _TrackBar():JSX.Element{
             }
         }
     };
+    setInterval(()=>{
+        if (currentTrack.track!.src) {
+        // @ts-ignore
+        dispatch(fetchMP3Link(currentTrack.track!.src, setIsLoading));
+        }
+    },180000)
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTime = parseInt(e.target.value, 10);
         if (audioRef != null && audioRef.current != null) {
@@ -122,6 +123,7 @@ function _TrackBar():JSX.Element{
     if(currentTrack.track){
         const tittle= `${currentTrack.track.trackName} - ${currentTrack.track.artistName}`
     return (
+        <>{isLoading && <span style={{margin: '50px', position: 'absolute'}}>Загрузка...</span>}
         <div className={styles.playerContainer}>
             <div className={styles.player}>
 
@@ -173,6 +175,7 @@ function _TrackBar():JSX.Element{
                 />
             </div>
         </div>
+        </>
     )
     }
     else {

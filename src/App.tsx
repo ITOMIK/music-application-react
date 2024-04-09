@@ -16,6 +16,7 @@ function App() {
     const [watchFavorites, setWatchFavorites] = useState(true);
     const [currentTracks, setCurrentTracks] = useState<TrackInfo[]>(libary);
     const [selectedValue, setSelectedValue] = useState("");
+    const [isLoading, setIsLoading] = useState(false)
 
     const SelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setSelectedValue(event.target.value);
@@ -28,6 +29,7 @@ function App() {
         event.preventDefault();
         if(selectedValue==="")
             alert("Сначала выберетите что хотите добавить")
+        setIsLoading(true)
         if(selectedValue==="song"){
         axios.get(`http://127.0.0.1:8000/GetTrackInfo/${query}`).then((r) => {
             if (!r.data) return;
@@ -62,7 +64,7 @@ function App() {
                 })
 
 
-            }).catch(e=> {console.log(e); alert("cannot find tracks")});
+            }).catch(e=> {console.log(e); alert("cannot find tracks")}).finally(()=> {setIsLoading(false); setQuery('')});
         }
     };
 
@@ -75,7 +77,9 @@ function App() {
     }, [favoriteTracks, libary, watchFavorites]);
 
     return (
+        <>{isLoading && <span style={{margin: '50px', position: 'absolute'}}>Загрузка...</span>}
         <div className={styles.playerContainer}>
+
             <div className={styles.additionalControls}>
 
                 <select
@@ -99,7 +103,7 @@ function App() {
                         onChange={handleChange}
                         className={styles.inputField}
                     />
-                    <button type="submit">Добавить в очередь</button>
+                    <button type="submit" disabled={isLoading} >Добавить в очередь</button>
                 </form>
                 <button
                     onClick={changeCurrentTracks}
@@ -114,16 +118,18 @@ function App() {
                 </button>
             </div>
             <div className={styles.trackBlocksContainer}>
-                {currentTracks != null ? (
+                {currentTracks != null  ? (
                     currentTracks.map((t) => (
                         <TrackBlock track={t} key={t.id} currentFlag={watchFavorites}/>
                     ))
                 ) : null}
             </div>
+
             <div className={styles.trackBarContainer}>
                 <TrackBar/>
             </div>
         </div>
+        </>
     );
 }
 
