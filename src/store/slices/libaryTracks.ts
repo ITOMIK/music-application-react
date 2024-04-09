@@ -28,6 +28,9 @@ export const counterSlice = createSlice({
                 state.push(action.payload);
             }
             localStorage.setItem('library', JSON.stringify(state));
+        },
+        cleanLibrary: (_state)=>{
+            return []
         }
     },
 });

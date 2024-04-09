@@ -1,12 +1,13 @@
 import React, {JSX, useRef, useState, useEffect} from "react";
 import {useTypedSelector} from "../../hooks/useTypedSelector.ts";
 import {useDispatch} from "react-redux";
-import {actions, TrackBar} from "../../store/slices/trackBarSlice.ts";
+import {actions, TrackBar, fetchMP3Link} from "../../store/slices/trackBarSlice.ts";
 import styles from "./TrackBar.module.css";
 import {FaPlay, FaPause, FaVolumeUp, FaVolumeDown, FaVolumeOff, FaArrowLeft, FaArrowRight} from 'react-icons/fa';
 
 function _TrackBar():JSX.Element{
     const currentTrack = useTypedSelector(state=> state.trackBarInfo)
+
     const dispatch = useDispatch()
     const Libary = useTypedSelector(state=>state.libaryTracks)
     const audioRef = useRef<HTMLAudioElement>(null);
@@ -42,7 +43,14 @@ function _TrackBar():JSX.Element{
         };
         return track;
     };
-
+    useEffect(() => {
+        // @ts-ignore
+        if(!currentTrack.track.src.startsWith("https")){
+            console.log(currentTrack.track!.src)
+            // @ts-ignore
+        dispatch(fetchMP3Link(currentTrack.track!.src));
+        }
+    }, [currentTrack.track!.src]);
     useEffect(()=>{
         if(currentTrack.isPlaying && audioRef.current){
         audioRef.current.play()
@@ -63,6 +71,11 @@ function _TrackBar():JSX.Element{
         }
     }, [audioRef.current]);
     const togglePlay = () => {
+        console.log(currentTrack.track!.src)
+        if (currentTrack.track!.src) {
+            // @ts-ignore
+            dispatch(fetchMP3Link(currentTrack.track!.src));
+        }
         dispatch(actions.togglePlay())
         const t = currentTrack.currentTime;
         if (audioRef.current) {
@@ -103,6 +116,8 @@ function _TrackBar():JSX.Element{
         const seconds = sec%60
         return `${Math.floor(min)}:${seconds<10? `0${seconds}`: seconds}`
     }
+
+    //const getSrc = async ()=>{axios.get(`http://127.0.0.1:8000/GetMp3Link/${currentTrack.track!.src}`).then(r=> {currentTrack.track!.src=r.data.url; return r.data.url})}
 
     if(currentTrack.track){
         const tittle= `${currentTrack.track.trackName} - ${currentTrack.track.artistName}`

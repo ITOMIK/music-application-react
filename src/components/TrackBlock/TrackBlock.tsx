@@ -9,11 +9,10 @@ import { FaPlay } from 'react-icons/fa';
 
 interface TrackBlockProps {
     track: TrackInfo;
-    changeCurrentTracks: Function;
     currentFlag: boolean;
 }
 
-function TrackBlock({track,changeCurrentTracks, currentFlag}:TrackBlockProps):JSX.Element{
+function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
     const dispatch = useDispatch()
     const favoriteTracks = useTypedSelector(state=> state.tracksInfo)
     const LibaryTracks = useTypedSelector(state=> state.libaryTracks)
@@ -54,7 +53,6 @@ function TrackBlock({track,changeCurrentTracks, currentFlag}:TrackBlockProps):JS
                             style={{"marginLeft": "20px", "backgroundColor": favFlag?"#ED4926":"#007bff"}}
                             onClick={() => {
                                 dispatch(LibaryActions.toggleTracksInfo(track))
-                                changeCurrentTracks(true);
                                 currentFlag? setIsVisible(false):null
                             }}
                         >

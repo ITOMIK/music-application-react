@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import {TrackInfo} from "./tracksSlice.ts";
+import axios from "axios";
 
 export interface TrackBar {
     track: TrackInfo | null
@@ -34,6 +35,7 @@ export const counterSlice = createSlice({
             state.currentTime = 0;
             state.track = action.payload.track;
             state.isPlaying = true;
+            state.voulme = localStorage.getItem('voulme') ? JSON.parse(localStorage.getItem('voulme')!) : 1;
             localStorage.setItem('currentTime', JSON.stringify(state.currentTime));
             localStorage.setItem('track', JSON.stringify(state.track));
             localStorage.setItem('isPlaying', JSON.stringify(state.isPlaying));
@@ -51,7 +53,32 @@ export const counterSlice = createSlice({
             state.voulme= action.payload
             localStorage.setItem('voulme', JSON.stringify(state.voulme));
         },
+        setSrcSuccess: (state, action: PayloadAction<string>) => {
+            if (state.track) {
+                state.track.src = action.payload;
+            }
+        },
     },
 })
 
 export const { actions, reducer } = counterSlice
+
+export const fetchMP3Link = (trackSrc: string | null) => async (dispatch: Function) => {
+    let retryCount = 0;
+    const maxRetries = 3;
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+    while (retryCount < maxRetries) {
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/GetMp3Link/${trackSrc}`);
+            dispatch(actions.setSrcSuccess(response.data.url));
+            return; // Выходим из цикла, если запрос выполнен успешно
+        } catch (error) {
+            console.error("Error fetching MP3 link:", error);
+            retryCount++;
+            await delay(1000); // Ждем 1 секунду перед следующей попыткой
+        }
+    }
+
+    console.error("Max retry attempts reached. Failed to fetch MP3 link.");
+};
