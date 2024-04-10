@@ -33,7 +33,6 @@ function _TrackBar():JSX.Element{
             track: Libary[nextIndex],
             currentTime: 0,
             voulme: 0,
-            isPlaying: true,
         };
         return track;
     };
@@ -49,7 +48,6 @@ function _TrackBar():JSX.Element{
             track: Libary[prevIndex],
             currentTime: 0,
             voulme: 0,
-            isPlaying: true,
         };
         return track;
     };
@@ -76,20 +74,20 @@ function _TrackBar():JSX.Element{
             // @ts-ignore
             dispatch(fetchMP3Link(currentTrack.track!.src, setIsLoading));
         }
-        dispatch(actions.togglePlay())
         const t = currentTrack.currentTime;
         if (audioRef.current) {
+            console.log(currentTrack.isPlaying)
             if (currentTrack.isPlaying) {
                 audioRef.current.pause();
             } else {
                 audioRef.current.play();
-                if (audioRef.current) {
-                    const audioElement = audioRef.current;
-                    audioElement.currentTime = t!;
-                }
-
+            }
+            if (audioRef.current) {
+                const audioElement = audioRef.current;
+                audioElement.currentTime = t!;
             }
         }
+        dispatch(actions.togglePlay())
     };
 
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {

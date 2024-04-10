@@ -20,6 +20,7 @@
 .seekBar,
 .volumeBar {
     margin: 0 10px;
+    accent-color: #007bff;
 }
 .volumeBar{
     width: 7%;
