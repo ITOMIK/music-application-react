@@ -5,7 +5,8 @@ import {useTypedSelector} from "../../hooks/useTypedSelector.ts";
 import {actions as barActions, fetchMP3Link, TrackBar} from "../../store/slices/trackBarSlice.ts";
 import {actions as LibaryActions} from "../../store/slices/libaryTracks.ts"
 import styles from "./TrackBlock.module.css";
-import { FaPlay } from 'react-icons/fa';
+import { FaPlay, FaHeart, FaHeartBroken, FaTrashAlt , FaPlus    }  from 'react-icons/fa';
+
 
 interface TrackBlockProps {
     track: TrackInfo;
@@ -21,7 +22,7 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
     const [isVisible, setIsVisible] = useState(true)
 
     const obj:TrackBar={
-        track:track
+        track:track,
     }
 
     return (
@@ -42,8 +43,8 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
                         }}
                     >
                         {visFlagFav
-                            ? "Убрать из Избранного"
-                            : "Добавить в Избранное"}{" "}
+                            ? < FaHeartBroken/>
+                            : <FaHeart />}{" "}
 
 
                     </button>
@@ -56,26 +57,28 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
                                 currentFlag? setIsVisible(false):null
                             }}
                         >
-                            {favFlag? "Убрать из очереди": "Добавить в очередь"}
+                            {favFlag? <FaTrashAlt />: <FaPlus    />}
 
                         </button>
                 </div>
 
+                    <button
+                        className={styles.playButton}
+                        onClick={() => {
+                            obj.isPlaying = false;
+                            console.log(obj)
+                            dispatch(barActions.setTrackBar(obj));
+                            // @ts-ignore
+                            dispatch(fetchMP3Link(obj.track!.src));
+                        }}
+                    >
+                        <FaPlay/>
+                    </button>
 
-                <button
-                    className={styles.playButton}
-                    onClick={() => {
-                        dispatch(barActions.setTrackBar(obj));
-                        // @ts-ignore
-                        dispatch(fetchMP3Link(obj.track!.src));
-                    }}
-                >
-                    <FaPlay/>
-                </button>
 
             </div>
 
-        </div>:null
+        </div> : null
             }
         </>
     )

@@ -19,11 +19,28 @@
 
 .seekBar,
 .volumeBar {
-    width: 200px;
     margin: 0 10px;
+}
+.volumeBar{
+    width: 7%;
+}
+.seekBar{
+    width: 50%;
 }
 
 .nameBlock{
-    width: 50%;
+    width: 18%;
     margin: 5px;
+}
+
+
+.tooltip {
+    display: inline-block;
+    position: fixed;
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    z-index: 9999;
 }

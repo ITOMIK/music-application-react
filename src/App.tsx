@@ -16,7 +16,8 @@ function App() {
     const [watchFavorites, setWatchFavorites] = useState(true);
     const [currentTracks, setCurrentTracks] = useState<TrackInfo[]>(libary);
     const [selectedValue, setSelectedValue] = useState("");
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
+    const [showTooltip, setShowTooltip] = useState(false);
     useEffect(() => {
         const confirmExit = (event: BeforeUnloadEvent) => {
             event.preventDefault();
@@ -38,6 +39,11 @@ function App() {
     };
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         setQuery(event.target.value);
+        if (event.target.value.length > 2) {
+            setShowTooltip(true);
+        } else {
+            setShowTooltip(false);
+        }
     };
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -56,7 +62,7 @@ function App() {
                 id: r.data.id,
             };
             dispatch(actions.toggleTracksInfo(obj));
-        }).catch(e=> {console.log(e); alert("cannot find track")});
+        }).catch(e=> {console.log(e); alert("cannot find track")}).finally(()=>{setIsLoading(false)});
         }
         else{
         let _o = {
@@ -120,6 +126,9 @@ function App() {
                     />
                     <button type="submit" disabled={isLoading} >Добавить в очередь</button>
                 </form>
+                {showTooltip  && (
+                    <div className={styles.tooltip}>Введите не более двух символов</div>
+                )}
                 <button
                     onClick={changeCurrentTracks}
                     className={styles.favoriteButton}

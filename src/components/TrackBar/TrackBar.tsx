@@ -3,13 +3,22 @@ import {useTypedSelector} from "../../hooks/useTypedSelector.ts";
 import {useDispatch} from "react-redux";
 import {actions, TrackBar, fetchMP3Link} from "../../store/slices/trackBarSlice.ts";
 import styles from "./TrackBar.module.css";
-import {FaPlay, FaPause, FaVolumeUp, FaVolumeDown, FaVolumeOff, FaArrowLeft, FaArrowRight} from 'react-icons/fa';
+import {
+    FaPlay,
+    FaPause,
+    FaVolumeUp,
+    FaVolumeDown,
+    FaVolumeOff,
+    FaAngleDoubleLeft, FaAngleDoubleRight, FaHeartBroken, FaHeart
+} from 'react-icons/fa';
+import {actions as favActions} from "../../store/slices/tracksSlice.ts";
 
 function _TrackBar():JSX.Element{
     const currentTrack = useTypedSelector(state=> state.trackBarInfo)
 
     const dispatch = useDispatch()
     const Libary = useTypedSelector(state=>state.libaryTracks)
+    const favoriteTracks = useTypedSelector(state => state.tracksInfo)
     const audioRef = useRef<HTMLAudioElement>(null);
     const [maxTime, setMaxTime] = useState<number>(0)
     const [isLoading, setIsLoading] = useState(false)
@@ -24,7 +33,7 @@ function _TrackBar():JSX.Element{
             track: Libary[nextIndex],
             currentTime: 0,
             voulme: 0,
-            isPlaying: true
+            isPlaying: true,
         };
         return track;
     };
@@ -40,7 +49,7 @@ function _TrackBar():JSX.Element{
             track: Libary[prevIndex],
             currentTime: 0,
             voulme: 0,
-            isPlaying: true
+            isPlaying: true,
         };
         return track;
     };
@@ -120,24 +129,41 @@ function _TrackBar():JSX.Element{
                 <div className={styles.nameBlock}>
 
                     <h2>
-                    {isLoading? "Загрузка...": tittle.length>80? tittle.slice(0, 77)+"...": tittle}
+                        {isLoading ? "Загрузка..." : tittle.length > 30 ? tittle.slice(0, 27) + "..." : tittle}
                     </h2>
+
                 </div>
+                <button
+                    style={{
+                        "marginLeft": "20px",
+                        "backgroundColor": favoriteTracks.some(s => s.id == currentTrack.track!.id) ? "#ED4926" : "#007bff"
+                    }}
+                    onClick={() => {
+                        dispatch(favActions.toggleTracksInfo(currentTrack.track!));
+                    }}
+                >
+                    {favoriteTracks.some(s => s.id == currentTrack.track!.id)
+                        ? < FaHeartBroken/>
+                        : <FaHeart/>}{" "}
+
+
+                </button>
                 <button style={{marginLeft: "15px"}} onClick={() => {
                     audioRef.current!.pause()
                     const song = getPreviousTrack()
                     dispatch(actions.setTrackBar(song));
                     // @ts-ignore
                     dispatch(fetchMP3Link(song.track?.src));
-                }}><FaArrowLeft /></button>
-                <button style={{marginLeft: "15px"}} onClick={togglePlay}>{currentTrack.isPlaying ? <FaPause/> : <FaPlay/>}</button>
+                }}><FaAngleDoubleLeft/></button>
+                <button style={{marginLeft: "15px"}} onClick={togglePlay}>{currentTrack.isPlaying ? <FaPause/> :
+                    <FaPlay/>}</button>
                 <button style={{marginLeft: "15px"}} onClick={() => {
                     audioRef.current!.pause()
                     const song = getNextTrack()
                     dispatch(actions.setTrackBar(song));
                     // @ts-ignore
                     dispatch(fetchMP3Link(song.track?.src));
-                }}><FaArrowRight /></button>
+                }}><FaAngleDoubleRight/></button>
                 <audio
                     ref={audioRef}
                     autoPlay={currentTrack.isPlaying}
@@ -160,7 +186,6 @@ function _TrackBar():JSX.Element{
                 />
 
 
-
                 {currentTrack.currentTime ? getRightTime(parseInt(currentTrack.currentTime.toFixed(0), 10)) : "0:00"} : {getRightTime(maxTime)}
                 {currentTrack.voulme! > 0.5 ? <FaVolumeUp style={{marginLeft: "15px"}}/> : currentTrack.voulme ?
                     <FaVolumeDown style={{marginLeft: "15px"}}/> : <FaVolumeOff style={{marginLeft: "15px"}}/>}
@@ -177,8 +202,7 @@ function _TrackBar():JSX.Element{
         </div>
         </>
     )
-    }
-    else {
+    } else {
         return (<></>);
     }
 };

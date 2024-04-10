@@ -9,7 +9,7 @@ export interface TrackBar {
     currentTime?: number,
     isPlaying?: boolean,
     voulme?: number,
-    src?: '',
+    src?: string,
 }
 
 const initialTrack = localStorage.getItem('track') ? JSON.parse(localStorage.getItem('track')!) : null;
@@ -24,7 +24,6 @@ const initialState: TrackBar = {
     isPlaying: initialIsPlaying,
     voulme:initialVoulme,
     src: '',
-
 };
 
 export const counterSlice = createSlice({
@@ -38,16 +37,20 @@ export const counterSlice = createSlice({
             document.title =action.payload.track?.trackName+" - "+action.payload.track?.artistName;
             state.currentTime = 0;
             state.track = action.payload.track;
-            state.isPlaying = true;
+            state.isPlaying = action.payload.isPlaying;
             state.voulme = localStorage.getItem('voulme') ? JSON.parse(localStorage.getItem('voulme')!) : 1;
             localStorage.setItem('currentTime', JSON.stringify(state.currentTime));
             localStorage.setItem('track', JSON.stringify(state.track));
             localStorage.setItem('isPlaying', JSON.stringify(state.isPlaying));
-            console.log(state.track);
             }
         },
-        togglePlay: (state) => {
+        togglePlay: (state, action: PayloadAction<boolean |undefined>) => {
+            if(action.payload==undefined){
             state.isPlaying = !state.isPlaying;
+            }
+            else{
+                state.isPlaying = action.payload;
+            }
             localStorage.setItem('isPlaying', JSON.stringify(state.isPlaying));
         },
         toggleTime: (state, action: PayloadAction<number>) => {
@@ -80,6 +83,7 @@ export const fetchMP3Link = (trackSrc: string | null) => async (dispatch: Dispat
     const currentTime = Date.now();
     if (cachedData && currentTime - cachedData.timestamp < 60000) {
         dispatch(actions.setSrcSuccess(cachedData.url));
+        dispatch(actions.togglePlay(true))
         return;
     }
     if(cachedData && currentTime- cachedData.timestamp > 60000)
@@ -92,6 +96,7 @@ export const fetchMP3Link = (trackSrc: string | null) => async (dispatch: Dispat
         try {
             const response = await axios.get(`http://127.0.0.1:8000/GetMp3Link/${trackSrc}`);
             dispatch(actions.setSrcSuccess(response.data.url));
+            dispatch(actions.togglePlay(true))
             cache[trackSrc] = { url: response.data.url, timestamp: currentTime };
             return; // Выходим из цикла, если запрос выполнен успешно
         } catch (error) {
