@@ -90,15 +90,14 @@
 
 .tooltip {
     position: absolute;
-    top: calc(100% + 5px);
+    top: 43px;
     left: 0;
-    width: 100%;
-    background-color: #fff;
+    width: 61%;
+    background-color: #ccc;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 999;
-    display: none; /* Изначально скрываем подсказку */
+    z-index: 999
 }
 
 /* Стили для элементов в подсказке */
@@ -114,4 +113,8 @@
 
 .tooltip-item:hover {
     background-color: #f0f0f0;
+}
+
+.SearchString:hover{
+    background-color: #4b4b4b;
 }

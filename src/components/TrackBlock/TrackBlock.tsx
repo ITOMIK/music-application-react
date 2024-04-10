@@ -65,7 +65,7 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
                     <button
                         className={styles.playButton}
                         onClick={() => {
-                            obj.isPlaying = false;
+                            dispatch(barActions.setSrcSuccess(""))
                             console.log(obj)
                             dispatch(barActions.setTrackBar(obj));
                             // @ts-ignore

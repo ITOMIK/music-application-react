@@ -128,9 +128,9 @@ function _TrackBar():JSX.Element{
 
                 <div className={styles.nameBlock}>
 
-                    <h2>
+                    <h3>
                         {isLoading ? "Загрузка..." : tittle.length > 30 ? tittle.slice(0, 27) + "..." : tittle}
-                    </h2>
+                    </h3>
 
                 </div>
                 <button
@@ -149,8 +149,8 @@ function _TrackBar():JSX.Element{
 
                 </button>
                 <button style={{marginLeft: "15px"}} onClick={() => {
-                    audioRef.current!.pause()
                     const song = getPreviousTrack()
+                    dispatch(actions.setSrcSuccess(""))
                     dispatch(actions.setTrackBar(song));
                     // @ts-ignore
                     dispatch(fetchMP3Link(song.track?.src));
@@ -158,8 +158,8 @@ function _TrackBar():JSX.Element{
                 <button style={{marginLeft: "15px"}} onClick={togglePlay}>{currentTrack.isPlaying ? <FaPause/> :
                     <FaPlay/>}</button>
                 <button style={{marginLeft: "15px"}} onClick={() => {
-                    audioRef.current!.pause()
                     const song = getNextTrack()
+                    dispatch(actions.setSrcSuccess(""))
                     dispatch(actions.setTrackBar(song));
                     // @ts-ignore
                     dispatch(fetchMP3Link(song.track?.src));
