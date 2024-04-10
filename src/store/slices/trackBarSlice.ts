@@ -1,7 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice} from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import {TrackInfo} from "./tracksSlice.ts";
+import { TrackInfo } from './tracksSlice.ts';
 import axios from "axios";
+import { Dispatch } from 'redux';
 
 export interface TrackBar {
     track: TrackInfo | null
@@ -64,9 +65,10 @@ export const counterSlice = createSlice({
 
 export const { actions, reducer } = counterSlice
 
-export const fetchMP3Link = (trackSrc: string | null) => async (dispatch: Function) => {
-    if(trackSrc!.length>25)
-        return
+export const fetchMP3Link = (trackSrc: string | null) => async (dispatch: Dispatch<PayloadAction<string>>) :Promise<void>=> {
+    if (!trackSrc || trackSrc.length > 25) {
+        throw new Error("Invalid track source");
+    }
     let retryCount = 0;
     const maxRetries = 10;
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

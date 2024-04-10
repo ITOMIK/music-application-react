@@ -27,8 +27,7 @@ function _TrackBar():JSX.Element{
             isPlaying: true
         };
         if (currentTrack.track!.src) {
-            // @ts-ignore
-            dispatch(fetchMP3Link(track.track.src, setIsLoading));
+            dispatch<any>(fetchMP3Link(currentTrack.track!.src));
         }
         return track;
     };
@@ -47,8 +46,7 @@ function _TrackBar():JSX.Element{
             isPlaying: true
         };
         if (currentTrack.track!.src) {
-            // @ts-ignore
-            dispatch(fetchMP3Link(track.track.src, setIsLoading));
+            dispatch<any>(fetchMP3Link(currentTrack.track!.src));
         }
         return track;
     };
@@ -91,7 +89,7 @@ function _TrackBar():JSX.Element{
             }
         }
     };
-    
+
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTime = parseInt(e.target.value, 10);
         if (audioRef != null && audioRef.current != null) {
@@ -136,12 +134,12 @@ function _TrackBar():JSX.Element{
                 </div>
                 <button style={{marginLeft: "15px"}} onClick={() => {
                     dispatch(actions.setTrackBar(getPreviousTrack()));
-                    dispatch(fetchMP3Link(currentTrack.track.src));
+                    dispatch<any>(fetchMP3Link(currentTrack.track!.src));
                 }}><FaArrowLeft /></button>
                 <button style={{marginLeft: "15px"}} onClick={togglePlay}>{currentTrack.isPlaying ? <FaPause/> : <FaPlay/>}</button>
                 <button style={{marginLeft: "15px"}} onClick={() => {
                     dispatch(actions.setTrackBar(getNextTrack()));
-                    dispatch(fetchMP3Link(currentTrack.track.src));
+                    dispatch<any>(fetchMP3Link(currentTrack.track!.src));
                 }}><FaArrowRight /></button>
 
                 <audio
@@ -151,7 +149,9 @@ function _TrackBar():JSX.Element{
                     onTimeUpdate={handleTimeUpdate}
                     onEnded={() => {
                         dispatch(actions.setTrackBar(getNextTrack()));
-                        dispatch(fetchMP3Link(currentTrack.track.src));
+
+
+                        dispatch<any>(fetchMP3Link(currentTrack.track!.src));
                     }}
                 ></audio>
 

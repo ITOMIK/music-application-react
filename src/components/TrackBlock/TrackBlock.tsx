@@ -66,7 +66,7 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
                     className={styles.playButton}
                     onClick={() => {
                         dispatch(barActions.setTrackBar(obj));
-                        dispatch(fetchMP3Link(obj.track!.src));
+                        dispatch<any>(fetchMP3Link(obj.track!.src));
                     }}
                 >
                     <FaPlay/>
