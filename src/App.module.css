@@ -1,3 +1,14 @@
+@keyframes slideIn {
+    from {
+        transform: translateY(90%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 .playerContainer {
     align-content: center;
     display: flex;
@@ -5,14 +16,17 @@
     align-items: center;
     padding: 20px;
 
+
 }
 
 .trackBlocksContainer {
+    animation: slideIn 0.3s ease;
     width: 100%;
     margin-bottom: 120px;
 }
 
 .trackBarContainer {
+    animation: slideIn 0.5s ease;
     width: 100%;
     margin-top: 20px;
 }

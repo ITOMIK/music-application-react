@@ -69,7 +69,7 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
                             console.log(obj)
                             dispatch(barActions.setTrackBar(obj));
                             // @ts-ignore
-                            dispatch(fetchMP3Link(obj.track!.src));
+                            dispatch(fetchMP3Link(obj.track!.src, obj.currentTime));
                         }}
                     >
                         <FaPlay/>

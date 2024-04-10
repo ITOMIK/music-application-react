@@ -53,7 +53,9 @@ function _TrackBar():JSX.Element{
     };
     useEffect(()=>{
         if(currentTrack.isPlaying && audioRef.current){
-        audioRef.current.play()
+        audioRef.current.play();
+        console.log("1",currentTrack.currentTime)
+        audioRef.current.currentTime =currentTrack.currentTime!
         }
     },[currentTrack.isPlaying && audioRef.current])
     useEffect(() => {
@@ -70,24 +72,32 @@ function _TrackBar():JSX.Element{
         }
     }, [audioRef.current, audioRef]);
     const togglePlay = () => {
-        if(currentTrack!.track!.src.length<25){
-            // @ts-ignore
-            dispatch(fetchMP3Link(currentTrack.track!.src, setIsLoading));
-        }
-        const t = currentTrack.currentTime;
+        try{
+        // Проверяем, есть ли у нас сохраненное текущее время
+        const currentTime = currentTrack.currentTime || 0;
+
+        // Вызываем экшен для загрузки MP3-ссылки, если трек уже не загружен
+        // @ts-ignore
+        dispatch(fetchMP3Link(currentTrack.track!.src, currentTime));
+
         if (audioRef.current) {
-            console.log(currentTrack.isPlaying)
             if (currentTrack.isPlaying) {
+                // Если трек играет, ставим его на паузу и сохраняем текущее время
                 audioRef.current.pause();
+                dispatch(actions.togglePlay());
+                dispatch(actions.toggleTime(audioRef.current.currentTime));
             } else {
+                // Если трек на паузе, включаем его и устанавливаем сохраненное текущее время
+                audioRef.current.currentTime = currentTime;
                 audioRef.current.play();
-            }
-            if (audioRef.current) {
-                const audioElement = audioRef.current;
-                audioElement.currentTime = t!;
+                dispatch(actions.togglePlay());
             }
         }
-        dispatch(actions.togglePlay())
+        }
+        catch (e){
+            console.log("ivan");
+            console.error(e);
+        }
     };
 
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,7 +161,7 @@ function _TrackBar():JSX.Element{
                     dispatch(actions.setSrcSuccess(""))
                     dispatch(actions.setTrackBar(song));
                     // @ts-ignore
-                    dispatch(fetchMP3Link(song.track?.src));
+                    dispatch(fetchMP3Link(song.track?.src, currentTrack.currentTime));
                 }}><FaAngleDoubleLeft/></button>
                 <button style={{marginLeft: "15px"}} onClick={togglePlay}>{currentTrack.isPlaying ? <FaPause/> :
                     <FaPlay/>}</button>
@@ -160,7 +170,7 @@ function _TrackBar():JSX.Element{
                     dispatch(actions.setSrcSuccess(""))
                     dispatch(actions.setTrackBar(song));
                     // @ts-ignore
-                    dispatch(fetchMP3Link(song.track?.src));
+                    dispatch(fetchMP3Link(song.track?.src, currentTrack.currentTime));
                 }}><FaAngleDoubleRight/></button>
                 <audio
                     ref={audioRef}
@@ -171,7 +181,7 @@ function _TrackBar():JSX.Element{
                         const song = getNextTrack()
                         dispatch(actions.setTrackBar(song));
                         // @ts-ignore
-                        dispatch(fetchMP3Link(song.track?.src));
+                        dispatch(fetchMP3Link(song.track?.src, currentTrack.currentTime));
                     }}
                 ></audio>
                 <input

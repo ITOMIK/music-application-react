@@ -77,7 +77,6 @@ function App() {
     const fetchData = (s: string = "\t")=>{
         let search = s=="\t"? query: s
         search = search.replace('/', ' ');
-        console.log(search);
         setIsLoading(true)
         if(selectedValue==="song"){
             axios.get(`http://127.0.0.1:8000/GetTrackInfo/${search}`).then((r) => {
@@ -176,7 +175,7 @@ function App() {
                 }}>Очистить очередь
                 </button>
             </div>
-            <div className={styles.trackBlocksContainer}>
+            <div className={styles.trackBlocksContainer} key={Math.random()}>
                 {currentTracks != null  ? (
                     currentTracks.map((t) => (
                         <TrackBlock track={t} key={t.id} currentFlag={watchFavorites}/>
