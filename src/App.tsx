@@ -77,6 +77,7 @@ function App() {
     const fetchData = (s: string = "\t")=>{
         let search = s=="\t"? query: s
         search = search.replace('/', ' ');
+        console.log(search);
         setIsLoading(true)
         if(selectedValue==="song"){
             axios.get(`http://127.0.0.1:8000/GetTrackInfo/${search}`).then((r) => {
@@ -152,13 +153,13 @@ function App() {
                         className={styles.inputField}
                         onBlur={()=>{setTimeout(() => {
                             setShowTooltip(false);
-                        }, 10);}}
+                        }, 200);}}
                     />
                     <button type="submit" disabled={isLoading} >Добавить в очередь</button>
                 </form>
                     {showTooltip  && (
                         <div className={styles.tooltip}>
-                            {searchData.map((s, index)=> <div className={styles.SearchString} key={index} style={{fontSize: "1em", fontWeight: 500, fontFamily: "inherit"}} onClick={()=>{fetchData(s)}}>{s}</div>)}
+                            {searchData.map((s, index)=> <div className={styles.SearchString} key={index} style={{fontSize: "1em", fontWeight: 500, fontFamily: "inherit"}} onClick={()=>{console.log(s); fetchData(s)}}>{s}</div>)}
                         </div>
                     )}
                 </div>
