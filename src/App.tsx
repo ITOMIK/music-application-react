@@ -123,6 +123,10 @@ function App() {
         setCurrentTracks(watchFavorites ?  libary: favoriteTracks);
     }, [favoriteTracks, libary, watchFavorites]);
 
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
     return (
         <>{isLoading && <span style={{margin: '50px', position: 'absolute'}}>Загрузка...</span>}
         <div className={styles.playerContainer}>
@@ -175,7 +179,9 @@ function App() {
                 }}>Очистить очередь
                 </button>
             </div>
-            <div className={styles.trackBlocksContainer} key={Math.random()}>
+            <div className={styles.trackBlocksContainer}
+                 //@ts-ignore
+                 key={currentTracks}>
                 {currentTracks != null  ? (
                     currentTracks.map((t) => (
                         <TrackBlock track={t} key={t.id} currentFlag={watchFavorites}/>

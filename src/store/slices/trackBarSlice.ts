@@ -79,11 +79,11 @@ export const fetchMP3Link = (trackSrc: string | null, cTime: number) => async (d
 
     const cachedData = cache[trackSrc];
     const currentTime = Date.now();
-    if (cachedData && currentTime - cachedData.timestamp < 5*60000) {
+    if (cachedData && currentTime - cachedData.timestamp < 10*60000) {
         dispatch(actions.setSrcSuccess(cachedData.url));
         return;
     }
-    if(cachedData && currentTime- cachedData.timestamp > 5*60000)
+    if(cachedData && currentTime- cachedData.timestamp > 10*60000)
         delete cache[trackSrc];
     let retryCount = 0;
     const maxRetries = 10;
