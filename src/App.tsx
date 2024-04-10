@@ -17,7 +17,22 @@ function App() {
     const [currentTracks, setCurrentTracks] = useState<TrackInfo[]>(libary);
     const [selectedValue, setSelectedValue] = useState("");
     const [isLoading, setIsLoading] = useState(false)
+    useEffect(() => {
+        const confirmExit = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+            event.returnValue = ""; // Для браузеров, поддерживающих свойство returnValue
+            const confirmationMessage = "Вы уверены, что хотите покинуть страницу?";
+            event.returnValue = confirmationMessage; // Для старых браузеров
 
+            return confirmationMessage;
+        };
+
+        window.addEventListener("beforeunload", confirmExit);
+
+        return () => {
+            window.removeEventListener("beforeunload", confirmExit);
+        };
+    }, []);
     const SelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setSelectedValue(event.target.value);
     };
@@ -88,9 +103,9 @@ function App() {
                     id={"type-o"}
                     onChange={SelectChange}
                     value={selectedValue}
+                    defaultValue={"song"}
                 >
-                    <option value="">--Выберите то, что хотите добавить --</option>
-                    <option value="song" selected>Песня</option>
+                    <option value="song">Песня</option>
                     <option value="album">Альбом</option>
                     <option value="radio">Радио(введите username)</option>
                     <option value="chart">Популярные треки</option>

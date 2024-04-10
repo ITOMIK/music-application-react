@@ -26,9 +26,6 @@ function _TrackBar():JSX.Element{
             voulme: 0,
             isPlaying: true
         };
-        if (currentTrack.track!.src) {
-            dispatch<any>(fetchMP3Link(currentTrack.track!.src));
-        }
         return track;
     };
 
@@ -45,9 +42,6 @@ function _TrackBar():JSX.Element{
             voulme: 0,
             isPlaying: true
         };
-        if (currentTrack.track!.src) {
-            dispatch<any>(fetchMP3Link(currentTrack.track!.src));
-        }
         return track;
     };
     useEffect(()=>{
@@ -55,7 +49,6 @@ function _TrackBar():JSX.Element{
         audioRef.current.play()
         }
     },[currentTrack.isPlaying && audioRef.current])
-
     useEffect(() => {
         if (audioRef.current!=null) {
             audioRef.current.onloadedmetadata = () => {
@@ -68,7 +61,7 @@ function _TrackBar():JSX.Element{
                 }
             };
         }
-    }, [audioRef.current]);
+    }, [audioRef.current, audioRef]);
     const togglePlay = () => {
         if(currentTrack!.track!.src.length<25){
             // @ts-ignore
@@ -116,8 +109,6 @@ function _TrackBar():JSX.Element{
         return `${Math.floor(min)}:${seconds<10? `0${seconds}`: seconds}`
     }
 
-    //const getSrc = async ()=>{axios.get(`http://127.0.0.1:8000/GetMp3Link/${currentTrack.track!.src}`).then(r=> {currentTrack.track!.src=r.data.url; return r.data.url})}
-
     if(currentTrack.track){
         const tittle= `${currentTrack.track.trackName} - ${currentTrack.track.artistName}`
     return (
@@ -133,28 +124,32 @@ function _TrackBar():JSX.Element{
                     </h2>
                 </div>
                 <button style={{marginLeft: "15px"}} onClick={() => {
-                    dispatch(actions.setTrackBar(getPreviousTrack()));
-                    dispatch<any>(fetchMP3Link(currentTrack.track!.src));
+                    audioRef.current!.pause()
+                    const song = getPreviousTrack()
+                    dispatch(actions.setTrackBar(song));
+                    // @ts-ignore
+                    dispatch(fetchMP3Link(song.track?.src));
                 }}><FaArrowLeft /></button>
                 <button style={{marginLeft: "15px"}} onClick={togglePlay}>{currentTrack.isPlaying ? <FaPause/> : <FaPlay/>}</button>
                 <button style={{marginLeft: "15px"}} onClick={() => {
-                    dispatch(actions.setTrackBar(getNextTrack()));
-                    dispatch<any>(fetchMP3Link(currentTrack.track!.src));
+                    audioRef.current!.pause()
+                    const song = getNextTrack()
+                    dispatch(actions.setTrackBar(song));
+                    // @ts-ignore
+                    dispatch(fetchMP3Link(song.track?.src));
                 }}><FaArrowRight /></button>
-
                 <audio
                     ref={audioRef}
                     autoPlay={currentTrack.isPlaying}
-                    src={currentTrack.track.src}
+                    src={currentTrack.src}
                     onTimeUpdate={handleTimeUpdate}
                     onEnded={() => {
-                        dispatch(actions.setTrackBar(getNextTrack()));
-
-
-                        dispatch<any>(fetchMP3Link(currentTrack.track!.src));
+                        const song = getNextTrack()
+                        dispatch(actions.setTrackBar(song));
+                        // @ts-ignore
+                        dispatch(fetchMP3Link(song.track?.src));
                     }}
                 ></audio>
-
                 <input
                     type="range"
                     min="0"

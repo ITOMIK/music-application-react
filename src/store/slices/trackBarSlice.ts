@@ -1,4 +1,4 @@
-import { createSlice} from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { TrackInfo } from './tracksSlice.ts';
 import axios from "axios";
@@ -9,6 +9,7 @@ export interface TrackBar {
     currentTime?: number,
     isPlaying?: boolean,
     voulme?: number,
+    src?: '',
 }
 
 const initialTrack = localStorage.getItem('track') ? JSON.parse(localStorage.getItem('track')!) : null;
@@ -22,6 +23,8 @@ const initialState: TrackBar = {
     currentTime: initialCurrentTime,
     isPlaying: initialIsPlaying,
     voulme:initialVoulme,
+    src: '',
+
 };
 
 export const counterSlice = createSlice({
@@ -56,19 +59,31 @@ export const counterSlice = createSlice({
             localStorage.setItem('voulme', JSON.stringify(state.voulme));
         },
         setSrcSuccess: (state, action: PayloadAction<string>) => {
-            if (state.track) {
-                state.track.src = action.payload;
-            }
+                // @ts-ignore
+            state.src = action.payload;
         },
     },
 })
 
 export const { actions, reducer } = counterSlice
 
-export const fetchMP3Link = (trackSrc: string | null) => async (dispatch: Dispatch<PayloadAction<string>>) :Promise<void>=> {
-    if (!trackSrc || trackSrc.length > 25) {
-        throw new Error("Invalid track source");
+const cache: { [key: string]: { url: string; timestamp: number } } = {};
+
+export const fetchMP3Link = (trackSrc: string | null) => async (dispatch: Dispatch) :Promise<void>=> {
+
+    if (!trackSrc) {
+        return;
     }
+
+
+    const cachedData = cache[trackSrc];
+    const currentTime = Date.now();
+    if (cachedData && currentTime - cachedData.timestamp < 60000) {
+        dispatch(actions.setSrcSuccess(cachedData.url));
+        return;
+    }
+    if(cachedData && currentTime- cachedData.timestamp > 60000)
+        delete cache[trackSrc];
     let retryCount = 0;
     const maxRetries = 10;
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -77,6 +92,7 @@ export const fetchMP3Link = (trackSrc: string | null) => async (dispatch: Dispat
         try {
             const response = await axios.get(`http://127.0.0.1:8000/GetMp3Link/${trackSrc}`);
             dispatch(actions.setSrcSuccess(response.data.url));
+            cache[trackSrc] = { url: response.data.url, timestamp: currentTime };
             return; // Выходим из цикла, если запрос выполнен успешно
         } catch (error) {
             console.error("Error fetching MP3 link:", error);
