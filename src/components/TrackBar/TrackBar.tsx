@@ -145,13 +145,13 @@ function _TrackBar():JSX.Element{
                 <button
                     style={{
                         "marginLeft": "20px",
-                        "backgroundColor": favoriteTracks.some(s => s.id == currentTrack.track!.id) ? "#ED4926" : "#007bff"
+                        "backgroundColor": favoriteTracks.some(s => s.src == currentTrack.track!.src) ? "#ED4926" : "#007bff"
                     }}
                     onClick={() => {
                         dispatch(favActions.toggleTracksInfo(currentTrack.track!));
                     }}
                 >
-                    {favoriteTracks.some(s => s.id == currentTrack.track!.id)
+                    {favoriteTracks.some(s => s.src == currentTrack.track!.src)
                         ? < FaHeartBroken/>
                         : <FaHeart/>}{" "}
 

@@ -18,7 +18,7 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
     const favoriteTracks = useTypedSelector(state=> state.tracksInfo)
     const LibaryTracks = useTypedSelector(state=> state.libaryTracks)
     const favFlag = LibaryTracks.some(x=> x.id===track.id)
-    const visFlagFav = favoriteTracks.some((t) => t.id === track.id)
+    const visFlagFav = favoriteTracks.some((t) => t.src === track.src)
     const [isVisible, setIsVisible] = useState(true)
 
     const obj:TrackBar={

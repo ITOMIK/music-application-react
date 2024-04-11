@@ -19,7 +19,7 @@ export const counterSlice = createSlice({
     initialState,
     reducers: {
         toggleTracksInfo: (state, action: PayloadAction<TrackInfo>) => {
-            const index = state.findIndex(t => t.id === action.payload.id);
+            const index = state.findIndex(t => t.src === action.payload.src);
             if (index !== -1) {
                 state.splice(index, 1);
             } else {
