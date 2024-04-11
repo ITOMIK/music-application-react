@@ -172,7 +172,7 @@ function App() {
                     className={styles.favoriteButton}
                     data-count={watchFavorites ? favoriteTracks.length : libary.length}
                 >
-                    {watchFavorites ? "Смотреть избранное" : "Смотреть очередь"}
+                    {watchFavorites ? "Избранное" : "Очередь"}
                 </button>
                 <button className={styles.selectData} onClick={() => {
                     dispatch(actions.cleanLibrary())
@@ -182,7 +182,7 @@ function App() {
             <div className={styles.trackBlocksContainer}>
                 {currentTracks != null  ? (
                     currentTracks.map((t) => (
-                        <TrackBlock track={t} key={t.id} currentFlag={watchFavorites}/>
+                        <TrackBlock track={t} key={t.id+watchFavorites} currentFlag={watchFavorites}/>
                     ))
                 ) : null}
             </div>
