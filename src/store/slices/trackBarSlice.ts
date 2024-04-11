@@ -66,7 +66,7 @@ export const counterSlice = createSlice({
 
 export const { actions, reducer } = counterSlice
 
-const cache: { [key: string]: { url: string; timestamp: number } } = {};
+const cache: { [key: string]: { url: string} } = {};
 
 export const fetchMP3Link = (trackSrc: string | null, cTime: number) => async (dispatch: Dispatch) :Promise<void>=> {
 
@@ -78,13 +78,10 @@ export const fetchMP3Link = (trackSrc: string | null, cTime: number) => async (d
 
 
     const cachedData = cache[trackSrc];
-    const currentTime = Date.now();
-    if (cachedData && currentTime - cachedData.timestamp < 10*60000) {
+    if (cachedData) {
         dispatch(actions.setSrcSuccess(cachedData.url));
         return;
     }
-    if(cachedData && currentTime- cachedData.timestamp > 10*60000)
-        delete cache[trackSrc];
     let retryCount = 0;
     const maxRetries = 10;
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -93,7 +90,7 @@ export const fetchMP3Link = (trackSrc: string | null, cTime: number) => async (d
         try {
             const response = await axios.get(`http://127.0.0.1:8000/GetMp3Link/${trackSrc}`);
             dispatch(actions.setSrcSuccess(response.data.url));
-            cache[trackSrc] = { url: response.data.url, timestamp: currentTime };
+            cache[trackSrc] = { url: response.data.url};
             console.log(response.data.url)
             return; // Выходим из цикла, если запрос выполнен успешно
         } catch (error) {

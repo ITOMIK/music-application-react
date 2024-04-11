@@ -125,6 +125,8 @@ function _TrackBar():JSX.Element{
         return `${Math.floor(min)}:${seconds<10? `0${seconds}`: seconds}`
     }
 
+
+
     if(currentTrack.track){
         const tittle= `${currentTrack.track.trackName} - ${currentTrack.track.artistName}`
     return (
@@ -136,7 +138,7 @@ function _TrackBar():JSX.Element{
                 <div className={styles.nameBlock}>
 
                     <h3>
-                        {tittle.length > 30 ? tittle.slice(0, 27) + "..." : tittle}
+                        {tittle.length > 40 ? tittle.slice(0, 37) + "..." : tittle}
                     </h3>
 
                 </div>
