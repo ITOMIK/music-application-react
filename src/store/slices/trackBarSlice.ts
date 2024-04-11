@@ -43,6 +43,7 @@ export const counterSlice = createSlice({
             localStorage.setItem('currentTime', JSON.stringify(state.currentTime));
             localStorage.setItem('track', JSON.stringify(state.track));
             localStorage.setItem('isPlaying', JSON.stringify(state.isPlaying));
+            console.log(state.currentTime)
             }
         },
         togglePlay: (state) => {
@@ -68,9 +69,7 @@ export const { actions, reducer } = counterSlice
 
 const cache: { [key: string]: { url: string} } = {};
 
-export const fetchMP3Link = (trackSrc: string | null, cTime: number) => async (dispatch: Dispatch) :Promise<void>=> {
-
-    console.log(trackSrc, cTime)
+export const fetchMP3Link = (trackSrc: string | null) => async (dispatch: Dispatch) :Promise<void>=> {
 
     if (!trackSrc || trackSrc.length>25) {
         return;

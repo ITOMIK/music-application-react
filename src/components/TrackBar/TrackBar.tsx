@@ -77,7 +77,7 @@ function _TrackBar():JSX.Element{
 
         // Вызываем экшен для загрузки MP3-ссылки, если трек уже не загружен
         // @ts-ignore
-        dispatch(fetchMP3Link(currentTrack.track!.src, currentTime));
+        dispatch(fetchMP3Link(currentTrack.track!.src));
 
         if (audioRef.current) {
             if (currentTrack.isPlaying) {
@@ -166,7 +166,7 @@ function _TrackBar():JSX.Element{
                         if (currentTrack.currentTime === previousCurrentTime) {
                             console.log(currentTrack.currentTime, previousCurrentTime)
                             // @ts-ignore
-                            dispatch(fetchMP3Link(song.track?.src, currentTrack.currentTime));
+                            dispatch(fetchMP3Link(song.track?.src));
                         }
                     }, 500);
                 }}><FaAngleDoubleLeft/></button>
@@ -181,7 +181,7 @@ function _TrackBar():JSX.Element{
                         if (currentTrack.currentTime === previousCurrentTime) {
                             console.log(currentTrack.currentTime, previousCurrentTime)
                             // @ts-ignore
-                            dispatch(fetchMP3Link(song.track?.src, currentTrack.currentTime));
+                            dispatch(fetchMP3Link(song.track?.src));
                         }
                     }, 500);
                 }}><FaAngleDoubleRight/></button>
@@ -192,10 +192,14 @@ function _TrackBar():JSX.Element{
                     onTimeUpdate={handleTimeUpdate}
                     onEnded={() => {
                         const song = getNextTrack()
+                        dispatch(actions.setSrcSuccess(""));
+                        console.log(song)
                         dispatch(actions.setTrackBar(song));
                         // @ts-ignore
-                        dispatch(fetchMP3Link(song.track?.src, currentTrack.currentTime));
-                    }}
+                        dispatch(fetchMP3Link(song.track?.src));
+                        if(Libary.length===1){
+                            audioRef.current!.play();
+                    }}}
                 ></audio>
                 <input
                     type="range"

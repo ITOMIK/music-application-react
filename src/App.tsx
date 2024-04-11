@@ -179,9 +179,7 @@ function App() {
                 }}>Очистить очередь
                 </button>
             </div>
-            <div className={styles.trackBlocksContainer}
-                 //@ts-ignore
-                 key={currentTracks}>
+            <div className={styles.trackBlocksContainer}>
                 {currentTracks != null  ? (
                     currentTracks.map((t) => (
                         <TrackBlock track={t} key={t.id} currentFlag={watchFavorites}/>
