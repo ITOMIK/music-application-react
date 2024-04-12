@@ -1,6 +1,6 @@
 # music player application
 ***
-![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![Redux Toolkit](https://img.shields.io/badge/Redux_Toolkit-%23999999.svg?style=for-the-badge&logo=redux&logoColor=purple) ![Vite](https://img.shields.io/badge/Vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![Redux Toolkit](https://img.shields.io/badge/Redux_Toolkit-%23999999.svg?style=for-the-badge&logo=redux&logoColor=purple) ![RTK Query](https://img.shields.io/badge/RTK_Query-%23999999.svg?style=for-the-badge&logo=redux&logoColor=purple) ![Vite](https://img.shields.io/badge/Vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
 ***
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
