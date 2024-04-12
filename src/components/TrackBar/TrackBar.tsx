@@ -1,7 +1,7 @@
 import React, {JSX, useRef, useState, useEffect} from "react";
 import {useTypedSelector} from "../../hooks/useTypedSelector.ts";
 import {useDispatch} from "react-redux";
-import {actions, TrackBar, fetchMP3Link} from "../../store/slices/trackBarSlice.ts";
+import {actions, TrackBar} from "../../store/slices/trackBarSlice.ts";
 import styles from "./TrackBar.module.css";
 import {
     FaPlay,
@@ -12,6 +12,8 @@ import {
     FaAngleDoubleLeft, FaAngleDoubleRight, FaHeartBroken, FaHeart
 } from 'react-icons/fa';
 import {actions as favActions} from "../../store/slices/tracksSlice.ts";
+import {useFetchMp3ByLinkQuery} from "../../store/api.ts";
+
 
 function _TrackBar():JSX.Element{
     const currentTrack = useTypedSelector(state=> state.trackBarInfo)
@@ -20,7 +22,45 @@ function _TrackBar():JSX.Element{
     const Libary = useTypedSelector(state=>state.libaryTracks)
     const favoriteTracks = useTypedSelector(state => state.tracksInfo)
     const audioRef = useRef<HTMLAudioElement>(null);
-    const [maxTime, setMaxTime] = useState<number>(0)
+    const [maxTime, setMaxTime] = useState<number>(0);
+    const [loadingUrlFlag, setLoadingUrlFlag] = useState<boolean>(true);
+
+
+
+    const { data, isLoading,  } =  useFetchMp3ByLinkQuery(currentTrack.track?.src!, {skip:!(loadingUrlFlag && currentTrack.track!=null)})
+
+    useEffect(() => {
+
+            if(currentTrack.isOnPause){
+                audioRef.current!.pause()
+            }
+
+    }, [currentTrack.isOnPause]);
+
+    useEffect(()=>{
+        if(currentTrack.isPlaying && audioRef.current){
+            audioRef.current!.play();
+
+            audioRef.current.currentTime =currentTrack.currentTime!
+        }
+    },[currentTrack.isPlaying && audioRef.current]);
+
+    useEffect(() => {
+        if (audioRef.current!=null) {
+            audioRef.current.onloadedmetadata = () => {
+                const dur = audioRef.current!.duration.toFixed(0);
+                setMaxTime(parseInt(dur, 10))
+                //getNextTrack(currentTrack.track!)
+
+                if (audioRef.current && typeof currentTrack.voulme === 'number') {
+                    audioRef.current.volume = currentTrack.voulme;
+                }
+            };
+        }
+    }, [audioRef.current, audioRef]);
+
+
+
     const getNextTrack = (): TrackBar => {
         const song = currentTrack.track!;
         let nextIndex = Libary.findIndex(s => s.id === song.id) + 1;
@@ -32,6 +72,7 @@ function _TrackBar():JSX.Element{
             track: Libary[nextIndex],
             currentTime: 0,
             voulme: 0,
+            isPlaying: currentTrack.isPlaying
         };
         return track;
     };
@@ -47,29 +88,12 @@ function _TrackBar():JSX.Element{
             track: Libary[prevIndex],
             currentTime: 0,
             voulme: 0,
+            isPlaying: currentTrack.isPlaying
         };
         return track;
     };
-    useEffect(()=>{
-        if(currentTrack.isPlaying && audioRef.current){
-        audioRef.current.play();
-        console.log("1",currentTrack.currentTime)
-        audioRef.current.currentTime =currentTrack.currentTime!
-        }
-    },[currentTrack.isPlaying && audioRef.current])
-    useEffect(() => {
-        if (audioRef.current!=null) {
-            audioRef.current.onloadedmetadata = () => {
-                const dur = audioRef.current!.duration.toFixed(0);
-                setMaxTime(parseInt(dur, 10))
-                //getNextTrack(currentTrack.track!)
 
-                if (audioRef.current && typeof currentTrack.voulme === 'number') {
-                    audioRef.current.volume = currentTrack.voulme;
-                }
-            };
-        }
-    }, [audioRef.current, audioRef]);
+
     const togglePlay = () => {
         try{
         // Проверяем, есть ли у нас сохраненное текущее время
@@ -77,7 +101,7 @@ function _TrackBar():JSX.Element{
 
         // Вызываем экшен для загрузки MP3-ссылки, если трек уже не загружен
         // @ts-ignore
-        dispatch(fetchMP3Link(currentTrack.track!.src));
+       // dispatch(fetchMP3Link(currentTrack.track!.src));
 
         if (audioRef.current) {
             if (currentTrack.isPlaying) {
@@ -94,7 +118,6 @@ function _TrackBar():JSX.Element{
         }
         }
         catch (e){
-            console.log("ivan");
             console.error(e);
         }
     };
@@ -136,10 +159,13 @@ function _TrackBar():JSX.Element{
 
 
                 <div className={styles.nameBlock}>
-
+                    {isLoading?
+                        "Загрузка..."
+                        :
                     <h3>
                         {tittle.length > 40 ? tittle.slice(0, 37) + "..." : tittle}
                     </h3>
+                    }
 
                 </div>
                 <button
@@ -158,45 +184,38 @@ function _TrackBar():JSX.Element{
 
                 </button>
                 <button style={{marginLeft: "15px"}} onClick={() => {
-                    const song = getPreviousTrack()
-                    dispatch(actions.setSrcSuccess(""))
-                    dispatch(actions.setTrackBar(song));
-                    const previousCurrentTime = currentTrack.currentTime;
+                    setLoadingUrlFlag(false);
+                    if(currentTrack.isPlaying)
+                        audioRef.current!.pause();
+                    const previousCurrentId = currentTrack.track?.id;
+                    dispatch(actions.setTrackBar(getPreviousTrack()));
                     setTimeout(() => {
-                        if (currentTrack.currentTime === previousCurrentTime) {
-                            console.log(currentTrack.currentTime, previousCurrentTime)
-                            // @ts-ignore
-                            dispatch(fetchMP3Link(song.track?.src));
+                        if (currentTrack.track?.id === previousCurrentId) {
+                            setLoadingUrlFlag(true);
                         }
                     }, 500);
                 }}><FaAngleDoubleLeft/></button>
                 <button style={{marginLeft: "15px"}} onClick={togglePlay}>{currentTrack.isPlaying ? <FaPause/> :
                     <FaPlay/>}</button>
                 <button style={{marginLeft: "15px"}} onClick={() => {
-                    const song = getNextTrack()
-                    dispatch(actions.setSrcSuccess(""))
-                    dispatch(actions.setTrackBar(song));
-                    const previousCurrentTime = currentTrack.currentTime;
+                    setLoadingUrlFlag(false);
+                    if(currentTrack.isPlaying)
+                        audioRef.current!.pause();
+                    const previousCurrentId = currentTrack.track?.id;
+                    dispatch(actions.setTrackBar(getNextTrack()));
                     setTimeout(() => {
-                        if (currentTrack.currentTime === previousCurrentTime) {
-                            console.log(currentTrack.currentTime, previousCurrentTime)
-                            // @ts-ignore
-                            dispatch(fetchMP3Link(song.track?.src));
+                        if (currentTrack.track?.id === previousCurrentId) {
+                            setLoadingUrlFlag(true);
                         }
                     }, 500);
                 }}><FaAngleDoubleRight/></button>
                 <audio
                     ref={audioRef}
                     autoPlay={currentTrack.isPlaying}
-                    src={currentTrack.src}
+                    src={data?.url}
                     onTimeUpdate={handleTimeUpdate}
                     onEnded={() => {
-                        const song = getNextTrack()
-                        dispatch(actions.setSrcSuccess(""));
-                        console.log(song)
-                        dispatch(actions.setTrackBar(song));
-                        // @ts-ignore
-                        dispatch(fetchMP3Link(song.track?.src));
+                        dispatch(actions.setTrackBar(getNextTrack()));
                         if(Libary.length===1){
                             audioRef.current!.play();
                     }}}

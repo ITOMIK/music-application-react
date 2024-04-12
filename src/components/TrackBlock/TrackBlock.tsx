@@ -2,7 +2,7 @@ import {JSX, useState} from "react";
 import {actions, TrackInfo} from "../../store/slices/tracksSlice.ts";
 import {useDispatch} from "react-redux";
 import {useTypedSelector} from "../../hooks/useTypedSelector.ts";
-import {actions as barActions, fetchMP3Link, TrackBar} from "../../store/slices/trackBarSlice.ts";
+import {actions as barActions, TrackBar} from "../../store/slices/trackBarSlice.ts";
 import {actions as LibaryActions} from "../../store/slices/libaryTracks.ts"
 import styles from "./TrackBlock.module.css";
 import { FaPlay, FaHeart, FaHeartBroken, FaTrashAlt , FaPlus    }  from 'react-icons/fa';
@@ -23,7 +23,10 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
 
     const obj:TrackBar={
         track:track,
+        isPlaying: true
     }
+
+
 
     return (
         <>
@@ -65,11 +68,8 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
                     <button
                         className={styles.playButton}
                         onClick={() => {
-                            dispatch(barActions.setSrcSuccess(""))
-                            console.log(obj)
                             dispatch(barActions.setTrackBar(obj));
-                            // @ts-ignore
-                            dispatch(fetchMP3Link(obj.track!.src));
+                            dispatch(barActions.onPause())
                         }}
                     >
                         <FaPlay/>

@@ -8,6 +8,7 @@ import TrackBlock from "./components/TrackBlock/TrackBlock";
 import styles from "./App.module.css";
 import TrackBar from "./components/TrackBar/TrackBar";
 
+
 function App() {
     const dispatch = useDispatch();
     const favoriteTracks = useTypedSelector((state) => state.tracksInfo);
