@@ -68,9 +68,8 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
                     <button
                         className={styles.playButton}
                         onClick={() => {
-                            dispatch(barActions.onPause())
                             dispatch(barActions.setTrackBar(obj));
-
+                            dispatch(barActions.onPause())
                         }}
                     >
                         <FaPlay/>
