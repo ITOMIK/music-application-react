@@ -53,6 +53,7 @@ function _TrackBar():JSX.Element{
                 //getNextTrack(currentTrack.track!)
 
                 if (audioRef.current) {
+                    //@ts-ignore
                     audioRef.current.volume = currentTrack.voulme;
                 }
             };
