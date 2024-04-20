@@ -70,7 +70,7 @@ function TrackBlock({track, currentFlag}:TrackBlockProps):JSX.Element{
                         onClick={() => {
                             dispatch(barActions.onPause())
                             dispatch(barActions.setTrackBar(obj));
-                            
+
                         }}
                     >
                         <FaPlay/>

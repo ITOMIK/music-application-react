@@ -52,7 +52,7 @@ function _TrackBar():JSX.Element{
                 setMaxTime(parseInt(dur, 10))
                 //getNextTrack(currentTrack.track!)
 
-                if (audioRef.current && typeof currentTrack.voulme === 'number') {
+                if (audioRef.current) {
                     audioRef.current.volume = currentTrack.voulme;
                 }
             };
