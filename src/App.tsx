@@ -61,10 +61,11 @@ function App() {
             return
         }
         // @ts-ignore
-        axios.get(`http://127.0.0.1:8000/${_o[selectedValue]}/${query}`).then(r=> {
+        axios.get(`https://terpilafastapiapplication-5.onrender.com/${_o[selectedValue]}/${query}`).then(r=> {
             const data = r.data!=null? r.data: []
             if(data.length==0)
                 setShowTooltip(false);
+                console.log(data);
             setSearchData(data)
         }).catch(e=> console.log(e)).finally(()=>{set_IsLoading(false)})
     }
@@ -80,7 +81,7 @@ function App() {
         search = search.replace('/', ' ');
         setIsLoading(true)
         if(selectedValue==="song"){
-            axios.get(`http://127.0.0.1:8000/GetTrackInfo/${search}`).then((r) => {
+            axios.get(`https://terpilafastapiapplication-5.onrender.com/GetTrackInfo/${search}`).then((r) => {
                 if (!r.data) return;
                 let obj = {
                     trackName: r.data.name,
@@ -99,7 +100,7 @@ function App() {
                 chart: `GetChart`
             }
             // @ts-ignore
-            axios.get(`http://127.0.0.1:8000/${_o[selectedValue]}`).then((r) => {
+            axios.get(`https://terpilafastapiapplication-5.onrender.com/${_o[selectedValue]}`).then((r) => {
                 if (!r.data) return;
                 r.data.forEach((s: { name: any; artist: any; url: any; id: any; }) => {
                     let obj = {

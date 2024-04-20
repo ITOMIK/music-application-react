@@ -2,7 +2,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 
 
-const ApI_URl = 'http://127.0.0.1:8000';
+const ApI_URl = 'https://terpilafastapiapplication-5.onrender.com';
 
 type Url={
     url: string
