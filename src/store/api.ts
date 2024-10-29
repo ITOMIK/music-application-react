@@ -1,8 +1,8 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
+import data from "../../data.json";
 
 
-
-const ApI_URl = 'https://terpilafastapiapplication-5.onrender.com';
+const ApI_URl = data.api;
 
 type Url={
     url: string

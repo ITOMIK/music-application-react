@@ -7,6 +7,7 @@ import { useTypedSelector } from "./hooks/useTypedSelector";
 import TrackBlock from "./components/TrackBlock/TrackBlock";
 import styles from "./App.module.css";
 import TrackBar from "./components/TrackBar/TrackBar";
+import data from "../data.json";
 
 
 function App() {
@@ -61,7 +62,7 @@ function App() {
             return
         }
         // @ts-ignore
-        axios.get(`https://terpilafastapiapplication-5.onrender.com/${_o[selectedValue]}/${query}`).then(r=> {
+        axios.get(`${data.api}/${_o[selectedValue]}/${query}`).then(r=> {
             const data = r.data!=null? r.data: []
             if(data.length==0)
                 setShowTooltip(false);
@@ -81,7 +82,7 @@ function App() {
         search = search.replace('/', ' ');
         setIsLoading(true)
         if(selectedValue==="song"){
-            axios.get(`https://terpilafastapiapplication-5.onrender.com/GetTrackInfo/${search}`).then((r) => {
+            axios.get(`${data.api}/GetTrackInfo/${search}`).then((r) => {
                 if (!r.data) return;
                 let obj = {
                     trackName: r.data.name,
@@ -100,7 +101,7 @@ function App() {
                 chart: `GetChart`
             }
             // @ts-ignore
-            axios.get(`https://terpilafastapiapplication-5.onrender.com/${_o[selectedValue]}`).then((r) => {
+            axios.get(`${data.api}/${_o[selectedValue]}`).then((r) => {
                 if (!r.data) return;
                 r.data.forEach((s: { name: any; artist: any; url: any; id: any; }) => {
                     let obj = {
